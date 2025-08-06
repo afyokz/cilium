@@ -184,6 +184,10 @@ func (m *MockEndpointManager) UpdatePolicy(idsToRegen *set.Set[identity.NumericI
 	panic("MockEndpointManager.UpdatePolicy not implemented")
 }
 
+func (m *MockEndpointManager) RegenerateAllForPolicy(waitFor uint64) {
+	panic("MockEndpointManager.RegenerateAllForPolicy not implemented")
+}
+
 //	Serial Number:
 //	    65:09:76:9c:41:d2:d8:ba:5c:f4:2f:df:98:e5:d5:b8
 //	Signature Algorithm: sha256WithRSAEncryption
