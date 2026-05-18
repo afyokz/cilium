@@ -49,6 +49,8 @@ jobs:
   conformance-test-ipv6:
     env:
       job_name: "Conformance Smoke Test with IPv6"
+    environment:
+      name: test-with-images
     needs: check_changes
     if: ${{ needs.check_changes.outputs.tested == 'true' }}
     runs-on: ubuntu-24.04
@@ -72,6 +74,7 @@ jobs:
         uses: ./.github/actions/helm-default
         with:
           image-tag: ${{ github.event.pull_request.head.sha || github.sha }}
+          image-pull-secret: "cilium-registry"
 
       - name: Set image tag
         id: sha
@@ -103,6 +106,21 @@ jobs:
           kubectl_version: ${{ env.KIND_K8S_VERSION }}
           config: ${{ env.KIND_CONFIG }}
           wait: 0 # The control-plane never becomes ready, since no CNI is present
+
+      - name: Create imagePullSecret
+        run: |
+          kubectl create secret docker-registry cilium-registry \
+            --namespace kube-system \
+            --docker-server=${{ vars.DOCKER_READ_HOST }} \
+            --docker-username="${{ vars.DOCKER_READ_USERNAME }}" \
+            --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
+
+      - name: Login to docker registry for image wait
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        with:
+          registry: ${{ vars.DOCKER_READ_HOST}}
+          username: ${{ vars.DOCKER_READ_USERNAME}}
+          password: ${{ secrets.DOCKER_READ_PASSWORD }}
 
       - name: Wait for images to be available
         timeout-minutes: 30

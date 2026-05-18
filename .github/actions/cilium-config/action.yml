@@ -70,6 +70,9 @@ inputs:
   bgp-control-plane:
     description: 'Enable BGP Control Plane'
     default: 'false'
+  image-pull-secret:
+    description: 'Image pull secret to access Cilium images'
+    default: ''
 outputs:
   config:
     description: 'Cilium installation config'
@@ -225,5 +228,10 @@ runs:
             BGP_CONTROL_PLANE="${{ env.BGP_CONTROL_PLANE_HELM_VALUES }}"
           fi
 
-          CONFIG="${DEFAULTS} ${IMAGE} ${TUNNEL} ${DEVICES} ${LB_MODE} ${ENDPOINT_ROUTES} ${IPV4} ${IPV6} ${MASQ} ${EGRESS_GATEWAY} ${ENCRYPT} ${HOST_FW} ${LB_ACCELERATION} ${INGRESS_CONTROLLER} ${CILIUMENDPOINTSLICE} ${LOCAL_REDIRECT_POLICY} ${BGP_CONTROL_PLANE}"
+          PULL_SECRET=""
+          if [ "${{ inputs.image-pull-secret }}" != "" ]; then
+            PULL_SECRET=" --helm-set=imagePullSecrets[0].name=${{ inputs.image-pull-secret }}"
+          fi
+
+          CONFIG="${DEFAULTS} ${IMAGE} ${TUNNEL} ${DEVICES} ${LB_MODE} ${ENDPOINT_ROUTES} ${IPV4} ${IPV6} ${MASQ} ${EGRESS_GATEWAY} ${ENCRYPT} ${HOST_FW} ${LB_ACCELERATION} ${INGRESS_CONTROLLER} ${CILIUMENDPOINTSLICE} ${LOCAL_REDIRECT_POLICY} ${BGP_CONTROL_PLANE} ${PULL_SECRET}"
           echo "config=${CONFIG}" >> $GITHUB_OUTPUT

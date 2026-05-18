@@ -85,6 +85,8 @@ jobs:
     name: Install and Connectivity Test
     env:
       job_name: "Install and Connectivity Test"
+    environment:
+      name: test-with-images
     runs-on: ubuntu-24.04
     timeout-minutes: 120
     strategy:
@@ -117,6 +119,7 @@ jobs:
         with:
           image-tag: ${{ inputs.SHA || github.sha }}
           chart-dir: ./untrusted/install/kubernetes/cilium
+          image-pull-secret: "cilium-registry"
 
       - name: Get connectivity test flags
         id: e2e_config
@@ -283,6 +286,21 @@ jobs:
           image-tag: ${{ steps.vars.outputs.sha }}
           repository: ${{ env.CILIUM_CLI_RELEASE_REPO }}
           release-version: ${{ env.CILIUM_CLI_VERSION }}
+
+      - name: Create imagePullSecret
+        run: |
+          kubectl create secret docker-registry cilium-registry \
+            --namespace kube-system \
+            --docker-server=${{ vars.DOCKER_READ_HOST }} \
+            --docker-username="${{ vars.DOCKER_READ_USERNAME }}" \
+            --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
+
+      - name: Login to docker registry for image wait
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        with:
+          registry: ${{ vars.DOCKER_READ_HOST}}
+          username: ${{ vars.DOCKER_READ_USERNAME}}
+          password: ${{ secrets.DOCKER_READ_PASSWORD }}
 
       - name: Wait for images to be available
         timeout-minutes: 30
