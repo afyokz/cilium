@@ -438,7 +438,8 @@ type Endpoint struct {
 	// properties is used to store some internal properties about this Endpoint.
 	properties map[string]any
 
-	// Root scope for all of this endpoints reporters.
+	// reporterScope is set once in InitEndpointHealth and never cleared, so
+	// GetReporter can read it without locking.
 	reporterScope       cell.Health
 	closeHealthReporter func()
 
@@ -486,7 +487,6 @@ func (e *Endpoint) Close() {
 
 	if e.closeHealthReporter != nil {
 		e.closeHealthReporter()
-		e.reporterScope = nil
 	}
 
 	if e.PolicyMapPressureUpdater != nil {
