@@ -1,0 +1,100 @@
+name: Security Vulnerability Report
+description: Report a security vulnerability in Cilium (for non-sensitive issues only; for sensitive vulnerabilities, please follow our security disclosure policy)
+title: "[Security]: "
+labels: ["kind/bug", "security"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Security Vulnerability Report
+
+        > **⚠️ IMPORTANT:** If you believe you have found a **sensitive** security vulnerability,
+        > please **do NOT** open a public GitHub issue. Instead, follow our
+        > [Security Disclosure Policy](https://github.com/cilium/cilium/security/policy)
+        > and report it privately via GitHub's security advisory feature or email.
+        >
+        > This template is intended for **non-sensitive** security issues only.
+
+  - type: checkboxes
+    id: prerequisites
+    attributes:
+      label: Prerequisites
+      description: Please confirm the following before submitting.
+      options:
+        - label: I have read the [Security Disclosure Policy](https://github.com/cilium/cilium/security/policy).
+          required: true
+        - label: This issue is NOT a sensitive vulnerability that could be exploited in production environments.
+          required: true
+        - label: I have searched existing issues and this has not been reported before.
+          required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: What is the estimated severity of this issue?
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+        - Unknown
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the security issue.
+      placeholder: Describe the vulnerability, including what component is affected and what the potential impact is.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Provide detailed steps to reproduce the issue.
+      placeholder: |
+        1. Configure Cilium with ...
+        2. Send a request to ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact
+      description: Describe the potential security impact if this vulnerability were exploited.
+      placeholder: e.g., An attacker could bypass network policies and access restricted services.
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected_versions
+    attributes:
+      label: Affected Versions
+      description: Which versions of Cilium are affected?
+      placeholder: e.g., v1.14.0 - v1.14.5, v1.15.0
+    validations:
+      required: true
+
+  - type: textarea
+    id: mitigation
+    attributes:
+      label: Suggested Mitigation
+      description: If you have a suggested fix or workaround, please describe it here.
+      placeholder: Optional — describe any potential mitigation or fix.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information, logs, or screenshots.
+    validations:
+      required: false
